@@ -1,8 +1,8 @@
 ES6 模块
 ---
 
-### Overview
-+ JavaScript很早就有模块的概念了, 但是在之前是通过第三方库实现的, ES6将模块内置的JavaScript 语言中.
+### 1.Overview
++ JavaScript很早就有模块的概念了, 但是在之前是通过第三方库(CommonJS,AMD)实现的, ES6将模块内置的JavaScript 语言中.
 + 在 ES6中模块和文件一一对应, 有2种方式可以从模块到处变量和函数, 并且这两种方式可以混用, 不过推荐分开使用
 
 #### 一个模块中多个 export
@@ -41,15 +41,35 @@ export default class{}  //导出类, 注意没有分号
 | File extension	 | .js	| .js | 
 
 
-### JavaScript中的模块
+### 2.JavaScript中的模块
 
 + 一个模块就是一段代码, 在加载的时候执行
 + 这段代码中可以有变量和函数声明, 这些声明默认作用域属于这个模块, 可以使用 export给其他模块导入
 + 一个模块可以从其他模块中导入内容, 可以通过如下方式(都是字符串)导入, 默认是 js 文件
- + 相对路径 ('../model/user')
- + 绝对路径 ('/lib/js/utils')
- + 已经配置的模块名 ('utils')
+	+ 相对路径 ('../model/user')
+	+ 绝对路径 ('/lib/js/utils')
+	+ 已经配置的模块名 ('utils')
 + 多次导入同一个模块, 以第一次导入的为准
+
+#### ECMAScript5中的模块
++ ECMAScript5 中最重要的2中不互相兼容的模块标准:
+	+ CommonJS
+	+ AMD (Asynchronous Module Definition)
+
++ CommonJS
+	+ Node.js 中主要采用了这个标准, 只有很少部分 feature 没有使用
+	+ 主要特点: 
+		+ 语法简介; 
+		+ 适合服务器和同步加载
+
++ AMD
+	+ 最流行的实现是 RequireJS
+	+ 主要特点: 
+		+ 略复杂的语法, 使得 AMD 不需要使用 eval(); 
+		+ 适用于浏览器和异步加载
+
+
+
 
 
 
