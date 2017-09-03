@@ -72,10 +72,80 @@ export default class{}  //导出类, 注意没有分号
 + ECMAScript6的目标是创建 CommonJS 和 AMD 用户都能接受的方式:
 	+ 像 CommonJS 一样简洁的语法, 单个exports优先并且能解决循环依赖
 	+ 像 AMD 一样直接支持异步加载和配置模块加载
-+ 
++ 将模块内置到语言中让ES6拥有比 CommonJS 和 AMD 更强大的能力
+	+ 比 CommonJS 语法更简洁
+	+ 结构可以被静态分析(用作静态检查和优化等)
+	+ 循环依赖检查比 CommonJS 更加强大
++ ES6模块标准分为2个部分
+	+ 声明语法部分(用来 import 和 export)
+	+ 程序化加载API(用来配置模块如何加载以及条件化加载)
 
+### 3.ES6模块基础
++ 有2种export 方式
+	+ named export : several per module
+	+ default export : one per module
+#### Named Module
++ 在一个模块中通过在前面加上 export 前缀导出多个变量,函数或者类, export 通过它们的名字来区分这些需要导出的 item, 所以称为 named export 
 
+```JavaScript
+/*ES6的方式*/
+//lib.js
+export const sqrt = Math.sqrt;
+export function square(x){
+	return x*x;
+}
+export function diag(x,y){
+	return sqrt(square(x) + square(y));
+}
+//main.js
+import {square, diag} from 'lib';
+console.log(square(11));  //121
+console.log(diag(3,4)); //5
 
+/*CommonJS的方式*/
+//lib.js
+var sqrt = Math.sqrt;
+function square(x){
+	return x*x;
+}
+function diag(x,y){
+	return sqrt(square(x) + square(y));
+}
+module.exports = {
+	sqrt: sqrt,
+	square: square,
+	diag: diag
+};
+//main.js
+var square = require('lib').square;
+var diag = require('lib').diag;
+console.log(square(11));
+console.log(diag(3,4));
+```
+
+#### Default exports
++ 一个 ES6 模块可以选择一个 default export, default exports 特别容易 import
+
+```JavaScript
+//myFunc.js
+export default function(){}
+//MyClass.js
+export default class {}
+//main.js
+import myFunc from 'myFunc';
+import MyClass from 'MyClass';
+myFunc();
+const inst = new MyClass();
+
+```
++ 有2种 default export style
+	+ labeling declaration : 如上面myFunc 和 MyClass 中 function 和 Class 的名字可以去掉也可以加上, 但是建议匿名, 因为这样能让 `export default` 的操作对象变成一个表达式, 而不是一个命名的声明(解析其实也会将它们的匿名版作为表达式, 这样可能会造成不一致, 甚至引入新的声明形式), 可以用`()` 将export default 后面的部分写成一个表达式, 那么后面就可以加分号了.
+
+```JavaScript
+export default (function(){});
+export default (class{}); 
+```
+	+ exporting values directly : 
 
 
 
