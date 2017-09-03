@@ -68,6 +68,12 @@ export default class{}  //导出类, 注意没有分号
 		+ 略复杂的语法, 使得 AMD 不需要使用 eval(); 
 		+ 适用于浏览器和异步加载
 
+#### ECMAScript6中的模块
++ ECMAScript6的目标是创建 CommonJS 和 AMD 用户都能接受的方式:
+	+ 像 CommonJS 一样简洁的语法, 单个exports优先并且能解决循环依赖
+	+ 像 AMD 一样直接支持异步加载和配置模块加载
++ 
+
 
 
 
