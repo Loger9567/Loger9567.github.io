@@ -210,7 +210,7 @@ console.log(counter); //4
 
 ##### 对循环依赖的支持
 + 如果模块 A 和模块 B满足: A 直接或者间接 import B, 并且 B imoprt A, 那么 A 和 B 就循环依赖了, 这种情况是应该被避免的, 它将导致 A 和 B 被紧紧捆绑.
-+ CommonJS 是如何解决循环依赖的?
++ CommonJS中的循环依赖
 
 ```JavaScript
 //a.js
@@ -229,7 +229,15 @@ function bar(){
 }
 exports.bar = bar;
 //如果模块 a 先被导入, 在(i)行, 模块 b 中的 a 将在 export 之前获得模块 a 导入的对象. 因此, b 不能在 top level 获得 a.foo, 但是这个属性在 a 执行完成的时候是存在的. 如果 bar() 是在a 执行完成之后调用的, 那么(ii)行能正常工作.
+//通常记住:带有循环依赖, 你在模块中将不能获取import的东西, ES6中也是一样
 ```
+
++ CommonJS 方法的限制:
+	+ Node.js 方式的single value export 不能工作, 因此你需要export single value 而不是 object `module.exports = function(){...}` ; 如果模块 a 那样做了, 模块 b 的变量 a 在赋值的时候将不会更新而是指向原值
+	+ 你将不能直接使用 named export , 因为模块 b 不能像` var foo = require('a').foo` 这样导入 foo, foo 将变成 undefined. 也就是说无法用 foo 引用 a.foo
+	+ 总之: 这些限制意味着导入者和导出者都必须注意循环依赖, 并且提供显式支持.
+
++ ES6中的循环依赖
 
 
 
