@@ -139,13 +139,22 @@ const inst = new MyClass();
 
 ```
 + 有2种 default export style
-	+ labeling declaration : 如上面myFunc 和 MyClass 中 function 和 Class 的名字可以去掉也可以加上, 但是建议匿名, 因为这样能让 `export default` 的操作对象变成一个表达式, 而不是一个命名的声明(解析其实也会将它们的匿名版作为表达式, 这样可能会造成不一致, 甚至引入新的声明形式), 可以用`()` 将export default 后面的部分写成一个表达式, 那么后面就可以加分号了.
+	1. labeling declaration : 如上面myFunc 和 MyClass 中 function 和 Class 的名字可以去掉也可以加上, 但是建议匿名, 因为这样能让 `export default` 的操作对象变成一个表达式, 而不是一个命名的声明(解析其实也会将它们的匿名版作为表达式, 这样可能会造成不一致, 甚至引入新的声明形式), 可以用`()` 将export default 后面的部分写成一个表达式, 那么后面就可以加分号了.
 
 ```JavaScript
 export default (function(){});
 export default (class{}); 
+
 ```
-	+ exporting values directly : 
+	2. exporting values directly : 通过表达式来产生值,形如: `export default expression`
+	
+```JavaScript
+export default 'abc';
+export default foo();
+export default /^xyz$/;
+export default 5*7;
+export default {no: false, yes:true};
+```
 
 
 
