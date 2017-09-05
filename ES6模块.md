@@ -1,11 +1,11 @@
 ES6 模块
 ---
 
-### 1.Overview
+### 1. Overview
 ##### JavaScript很早就有模块的概念了, 但是在之前是通过第三方库(CommonJS,AMD)实现的, ES6将模块内置的JavaScript 语言中.
 ##### 在 ES6中模块和文件一一对应, 有2种方式可以从模块到处变量和函数, 并且这两种方式可以混用, 不过推荐分开使用
 
-#### 一个模块中多个 export
+#### 1.1 一个模块中多个 export
 ```JavaScript
 //lib.js
 export const sqrt = Math.sqrt;
@@ -20,7 +20,7 @@ import {square, diag} from 'lib';   //引用方式1
 import * from 'lib';  //引用方式2
 ```
 
-#### 一个模块单个 export
+#### 1.2 一个模块单个 export
 ##### 可以只有一个默认的 export
 ##### 注意没有分号, 可以是匿名的
 ```JavaScript
@@ -28,7 +28,7 @@ export default funciton(){} //导出函数,注意没有分号
 export default class{}  //导出类, 注意没有分号
 ```
 
-#### 浏览器中: 使用 script 标签和使用模块对比
+#### 1.3 浏览器中: 使用 script 标签和使用模块对比
 |      | Scripts          | Modules  |
 | ------------- |:-------------:| -----:|
 | Html element     | \<script\>| \<script type="module"\> |
@@ -41,7 +41,7 @@ export default class{}  //导出类, 注意没有分号
 | File extension	 | .js	| .js | 
 
 
-### 2.JavaScript中的模块
+### 2. JavaScript中的模块
 
 ##### 一个模块就是一段代码, 在加载的时候执行
 ##### 这段代码中可以有变量和函数声明, 这些声明默认作用域属于这个模块, 可以使用 export给其他模块导入
@@ -51,7 +51,7 @@ export default class{}  //导出类, 注意没有分号
 	+ 已经配置的模块名 ('utils')
 ##### 多次导入同一个模块, 以第一次导入的为准
 
-#### ECMAScript5中的模块
+#### 2.1 ECMAScript5中的模块
 ##### ECMAScript5 中最重要的2中不互相兼容的模块标准:
 	+ CommonJS
 	+ AMD (Asynchronous Module Definition)
@@ -68,7 +68,7 @@ export default class{}  //导出类, 注意没有分号
 		+ 略复杂的语法, 使得 AMD 不需要使用 eval(); 
 		+ 适用于浏览器和异步加载
 
-#### ECMAScript6中的模块
+#### 2.2 ECMAScript6中的模块
 ##### ECMAScript6的目标是创建 CommonJS 和 AMD 用户都能接受的方式:
 	+ 像 CommonJS 一样简洁的语法, 单个exports优先并且能解决循环依赖
 	+ 像 AMD 一样直接支持异步加载和配置模块加载
@@ -80,11 +80,11 @@ export default class{}  //导出类, 注意没有分号
 	+ 声明语法部分(用来 import 和 export)
 	+ 程序化加载API(用来配置模块如何加载以及条件化加载)
 
-### 3.ES6模块基础
+### 3. ES6模块基础
 ##### 有2种export 方式
 	+ named export : several per module
 	+ default export : one per module
-#### Named Module
+#### 3.1 Named Module
 ##### 在一个模块中通过在前面加上 export 前缀导出多个变量,函数或者类, export 通过它们的名字来区分这些需要导出的 item, 所以称为 named export 
 
 ```JavaScript
@@ -123,7 +123,7 @@ console.log(square(11));
 console.log(diag(3,4));
 ```
 
-#### Default exports
+#### 3.2 Default exports
 ##### 一个 ES6 模块可以选择一个 default export, default exports 特别容易 import
 
 ```JavaScript
@@ -165,8 +165,8 @@ export {__default__ as default };   //这个 export 语句在后文介绍
 export default const foo = 1,bar=2, baz=3;  //not legal js
 ```
 
-##### import 和 export 必须时候 top level 的
-	+ 后面会讲到 ES6 模块的结构是 static 的,不能条件地 import 或者 export一些东西, 这样做有很多好处, 同时这也是句法强制的.
+#### 3.3 import 和 export 必须时候 top level 的
++ 后面会讲到 ES6 模块的结构是 static 的,不能条件地 import 或者 export一些东西, 这样做有很多好处, 同时这也是句法强制的.
 
 ```JavaScript
 if(Math.random()){
@@ -178,7 +178,7 @@ if(Math.random()){
 }
 ```
 
-##### import 会 hoisted
+#### 3.4 import 会 hoisted
 类似 js 的变量提升, 模块的 import 将会被移动到当前作用域的开始, 所以在哪里声明都没关系.
 
 ```JavaScript
@@ -186,7 +186,7 @@ foo();  //it works!
 import {foo} from 'myModule'; 
 ```
 
-##### import 对于 export 来说是只读的
+#### 3.5 import 是 export 的 read-only view
 ###### ES6模块 import 进入后, 在被 import 的模块中声明的变量依然有效. 类似于引用一个视图
 ```JavaScript
 //lib.js
@@ -204,11 +204,11 @@ console.log(counter); //4
 ```
 
 ###### 这样做有以下好处:
-+ enable循环依赖, 甚至不合格的 import (后面讲解)
-+ 合格和不合格的 import 工作方式相同(它们都是 indirection的)
++ enable循环依赖, 甚至未检验的 import (后面讲解)
++ 已检验和未检验的 import 工作方式相同(它们都是 indirection的)
 + 可以将代码拆分为多个模块, 并且它将继续工作(如果你不试图去改变 import 的值)
 
-##### 对循环依赖的支持
+#### 3.6 对循环依赖的支持
 + 如果模块 A 和模块 B满足: A 直接或者间接 import B, 并且 B imoprt A, 那么 A 和 B 就循环依赖了, 这种情况是应该被避免的, 它将导致 A 和 B 被紧紧捆绑.
 + CommonJS中的循环依赖
 
@@ -233,12 +233,32 @@ exports.bar = bar;
 ```
 
 + CommonJS 方法的限制:
-	+ Node.js 方式的single value export 不能工作, 因此你需要export single value 而不是 object `module.exports = function(){...}` ; 如果模块 a 那样做了, 模块 b 的变量 a 在赋值的时候将不会更新而是指向原值
+	+ Node.js 方式的single value export 不能工作, 因此你需要export single value 而不是 object如: `module.exports = function(){...}` , 如果模块 a 这样导出, 模块 b 的变量 a 在赋值的时候将不会更新而是指向原值
 	+ 你将不能直接使用 named export , 因为模块 b 不能像` var foo = require('a').foo` 这样导入 foo, foo 将变成 undefined. 也就是说无法用 foo 引用 a.foo
 	+ 总之: 这些限制意味着导入者和导出者都必须注意循环依赖, 并且提供显式支持.
 
 + ES6中的循环依赖
+	+ ES6模块自动支持循环依赖, 也就是说它没有上面 CommonJS 的2点限制, 所以, 你可以像下面一样实现相互依赖的2个模块.
 
+```JavaScript
+//a.js
+import {bar} from 'b'; //(i)
+export funciton foo(){
+	bar();   //(ii)
+}
+//b.js
+imoprt {foo} from 'a'; //(iii)
+export function bar(){
+	if(Math.random()){
+		foo(); //(iv)
+	}
+}
+//这段代码能正常工作, 因为之前讲到过 import 是 export 的一个 view, 也就是说即使未检验的 import(就像(ii) 和 (iv) 行中的 bar 和 foo)间接指向了原始数据. 因此从表面上看循环依赖, 无论你在哪里named export (通过未检验的的 import 或者通过模块)都会间接涉及到循环依赖, 并且它总是能工作.
+```
+
+### 4. import 和 export 的细节
+
+#### 4.1 import的方式
 
 
 
