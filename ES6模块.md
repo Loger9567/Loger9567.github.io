@@ -259,9 +259,12 @@ export function bar(){
 ### 4. import 和 export 的细节
 
 #### 4.1 import的方式
-
-
-
++ default import `import localName from 'src/my_lib';`
++ namespace import : 将模块作为一个对象(每个 named export 带有一个属性)导入 `import * as my_lib from 'src/my_lib';`
++ named import : `import {name1, name2} from 'src/my_lib'` , 可以取别名,如: `import {name1 as localName, name2} from 'src/my_lib'`, `import {default as foo} from 'src/my_lib'`
++ empty import: 只导入模块, 但是并不导入任何东西, 会执行导入的模块  `import 'src/my_lib`
++ 组合default+namespace import : `import theDefault, * as my_lib from 'src/my_lib';`
++ 组合default+named import : `import theDefault, {name1, name2} from 'src/my_lib';`
 
 
 
