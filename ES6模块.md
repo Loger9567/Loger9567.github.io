@@ -266,6 +266,94 @@ export function bar(){
 + 组合default+namespace import : `import theDefault, * as my_lib from 'src/my_lib';`
 + 组合default+named import : `import theDefault, {name1, name2} from 'src/my_lib';`
 
+#### 4.2 Named exporting styling: inline versus clause
++ 有2种方式你可以 export 模块中命名的部分
+	+ 将 declartions 用关键字 export 标记
+	+ 在模块最后列出所有想要 export 的部分
+
+```JavaScript
+//  方式1:
+export var myVar1 = ...;
+export let myVar2 = ...;
+export const MY_CONST = ...;
+export function myFunc(){
+}
+export function * myGeneratorFunctino(){
+}
+export class MyClass{
+}
+//  方式2:
+const MY_CONST = ...;
+function myFunc(){
+}
+export {MY_CONST, myFunc};  //also can: export {MY_CONST as FOO, myFunc};
+```
+
+#### 4.3 Re-exporting
++ 将从其他模块中import的内容 export 出去, 如: `export * from 'src/other_module';`
++ `export * ` 表示忽略 `default export`
++ 可以在 export 的时候重命名: `export {foo, bar} from 'src/other_module';` `export {foo as myFoo, bar} from 'src/other_module';`
+##### re-export default export
++ 下面的语句使模块 foo 的 default export 变成当前模块的 default export : `export {default} from 'foo';`
++ 下面的语句是模块 foo 的 named export(也就是 myFunc ) 变成当前模块的 default export : `export {myFunc as default} from 'foo';`
+
+
+#### 4.4 所有 export 方式
++ ES6提供了几种不同的 export 方式
+##### re-exporting
++ re-export 所有(除了 default export): `export * from 'src/other_module';`
++ re-export via clause: 
+
+```JavaScript
+export {foo as myFoo, bar} from 'src/other_module';
+export {default} from 'src/other_module';
+export {default as foo} from 'src/other_module';
+export {foo as defualt} from 'src/other_module';
+```
+
+##### named export via a clause
++ `export {MY_CONST as FOO, myFunc} ;`
++ `export {foo as default};`
+
+
+##### inline named export
++ 变量声明: `export var foo;`  `export let foo;`  `export const foo;`
++ 函数声明: `export function myFunc(){};`   `export function * myGenFunc(){};`
++ 类声明:   `export class MyClass{};`
+
+##### default export 
++ 方法声明(可以匿名)
+
+```JavaScript
+export default function myFunc(){};
+export default function(){};
+export default function * myGenFunc(){};
+export default function * (){};
+```
+
++ 类声明(可以匿名)
+
+```JavaScript
+export default class MyClass{};
+export default class{};
+```
+
++ 表达式(export values, 末尾不能有分号)
+
+```JavaScript
+export default foo
+export default 'HelloWorld'
+export default 3*7
+export default (function(){})
+```
+
+
+
+
+
+
+
+
 
 
 
