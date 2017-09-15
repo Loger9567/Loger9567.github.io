@@ -347,7 +347,40 @@ export default 3*7
 export default (function(){})
 ```
 
+#### 4.5 一个模块中同时有named exports和default export
++ 在javascript库中很常见的是： 一个库就是一个单独的函数，而库的其他服务通过这个函数的属性来提供，比如jquery和underscore
 
+```javascript
+//underscore.js
+var = function(obj){
+	...
+}
+var each = _.each = _.forEach = function(obj, iterator, context) {
+	...
+}
+module.exports = _;
+
+//main.js
+var _ = require('underscore');
+var each = _.each;
+...
+```
+
++ 通过 ES6改写可以为:
+
+```JavaScript
+//underscore.js
+export default function(obj){
+	...
+}
+export function each(obj, iterator, context) {
+	...
+}
+export { each as forEach }
+
+//main.js
+import _, {each} from 'underscore';
+```
 
 
 
