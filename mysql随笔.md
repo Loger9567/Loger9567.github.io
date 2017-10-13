@@ -8,3 +8,10 @@
 
 ### 函数日期
 + [MySQL日期时间函数大全](http://www.cnblogs.com/zeroone/archive/2010/05/05/1727659.html)
+
+### mysql中的各种连接
++ [mysql连接内连接、左连接、右连接、全连接](http://blog.csdn.net/miraclestar/article/details/6525246)
+
+
+### 触发器
++ [数据库-触发器（定义、作用、使用方法、new/old虚拟表）](http://blog.csdn.net/zdplife/article/details/48155611)
