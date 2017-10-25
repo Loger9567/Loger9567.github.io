@@ -8,6 +8,7 @@
 # 设置
 $ git config --global user.name "Uncaught ReferenceError"
 $ git config --global user.email loger9567@gmail.com
+
 # 查看
 $ git config --list
 $ git config user.name
@@ -16,16 +17,24 @@ $ git config user.name
 #### 2. 查看提交记录
 
 ```sh
+# 查看最后一次提交
+$ git last
+
 # 查看所有
 $ git log
+
 # 查看最近2次提交
 $ git log -2
+
 # 查看提交简要信息(增改行数统计)
 $ git log --stat
+
 # 在同一行显示一个提交
 $ git log --pretty=oneline
+
 # 显示图形 --graph
 $ git log --pretty=format:"%h %s" --graph
+
 #使用 format
 $ git log --pretty=format: "%h - %an, %ar : %s"
 选项 说明
@@ -61,6 +70,7 @@ $ git commit --amend
 
 ```sh
 $ git reset HEAD <file>
+$ git unstage <file>
 ```
 
 
@@ -86,6 +96,7 @@ $ git branch -a
 ```sh
 # 使用 git clone 之后会自动添加 origin 为远程仓库
 $ git remote
+
 # 加 -v 或者 --verbose显示对应克隆地址
 $ git remote -v
 ```
