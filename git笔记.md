@@ -208,3 +208,86 @@ $ git push origin --tags
 ```
 
 
+#### 9.操作分支
+
++ 先了解分支的结构
+	+ 每次提交对应一个`commit` 对象, 也就是一个快照, 对应一个 `SHA-1`
+	+ `commit` 对象包含每一个子目录的校验和信息对象 `tree`
+	+ `tree` 对象保存记录实际文件信息的 `blob` 对象
+	+ 分支指向 `commit` 对象的校验和 `SHA-1`
+	+ `HEAD` 指向正在工作的本地分支
+
+```sh
+# 查看所有分支
+$ git branch -a
+```
+
++ 新建分支
+
+```sh
+$ git branch [branch_name]
+```
+
++ 切换分支 (切换之前`一定要`先提交当前分支修改, 否则会在其他分支被看到和提交)
+
+```sh
+# 只切换
+$ git checkout [branch_name]
+
+# 新建并切换
+$ git checkout -b [branch_name]
+```
+
++ 合并分支
+	+ 如果分支`A`可以顺着提交顺序可以走到另一个分支`B`,中间没有分岔,那么`git`合并的时候就直接把`A`的指针移动到`B`, 这个就是 `Fast Forward`
+	+ 在分支`A`上 `merge` 分支`B`, 和在分支`B`上 `merge` 分支`A`是不一样的, 如果不是`Fast Forward`, 那会新生成一个`commit`对象,
+
+```sh
+$ git merge [branch_name]
+
+#i.e. hotfix 是从 master 分支创建的紧急修复, 测试之后合并
+$ git checkout master
+$ git merge hotfix
+
+```
+
++ 删除分支
+	+ 当修复完成之后可以删除掉分支 hotfix
+		+ 如果 hotfix 还没有被 merge, 那么会提交保存, 因为会丢失数据
+		+ 可以强制杉树
+
+```sh
+$ git branch -d hotfix
+```
+
++ 冲突解决
+	+ 当 git 合并发生冲突, 合并结果还没有提交, 需要解决冲突后再提交
+	+ git 会在有冲突的文件中加入标准的冲突解决标记, 通过它们来手工定位解决冲突
+	+ 手工解决之后只需要将所有冲突的文件重新`add`, 然后`commit`就可以了
+
++ 管理分支
+
+```sh
+# 查看所有分支
+$ git branch
+
+# 查看所有分支和最后一次提交对象信息
+$ git branch -v
+
+# 查看哪些分支已经被(/没有被)并入当前分支(直接上游) 
+$ git branch --merge
+$ git branch --no-merged
+```
+
+
+
+
+
+
+
+#### 参考资料
+> [Pro Git（中文版）](http://git.oschina.net/progit/index.html)
+
+
+
+
