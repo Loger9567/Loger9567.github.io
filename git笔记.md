@@ -91,6 +91,13 @@ $ git branch -a
 
 
 #### 7. 远程仓库操作
++ 克隆仓库
+	+ 克隆仓库的时候会同步远程仓库的数据和分支, 并且在本地仓库建立一个 master 分支, 当本地仓库没有变动的时候, master 和 remote/origin/master 都指向远程仓库的 master 分支, 当本地仓库修改了 master 分支, 那么本地的 master 分支往前走, 而本地的 remote/origin/master 分支保持, 不管远程仓库的 remote 分支有没有变动, 只要没有和远程通信, 那么本地的 remote/origin/master 分支位置就不变, 当使用 fetch 同步数据的时候才可能会发生变化. 也就是说`git fetch`会更新 remote/origin/master 索引.
+
+```sh
+$ git clone [url]
+```
+
 + 查看远程仓库
 
 ```sh
@@ -240,7 +247,8 @@ $ git checkout -b [branch_name]
 
 + 合并分支
 	+ 如果分支`A`可以顺着提交顺序可以走到另一个分支`B`,中间没有分岔,那么`git`合并的时候就直接把`A`的指针移动到`B`, 这个就是 `Fast Forward`
-	+ 在分支`A`上 `merge` 分支`B`, 和在分支`B`上 `merge` 分支`A`是不一样的, 如果不是`Fast Forward`, 那会新生成一个`commit`对象,
+	+ 在分支`A`上 `merge` 分支`B`, 和在分支`B`上 `merge` 分支`A`是不一样的, 如果不是`Fast Forward`, 那会新生成一个`commit`对象, 而进行合并操作时所在的分支将会指向新的`commit`对象.
+	+ 合并都是在本地操作的, 不涉及到远程仓库, 除非是要合并远程仓库的分支到本地.`git merge origin/some_branch`
 
 ```sh
 $ git merge [branch_name]
@@ -279,14 +287,43 @@ $ git branch --merge
 $ git branch --no-merged
 ```
 
++ 跟踪分支
+	+ 从远程分支`checkout`的分支称为跟踪分支(tracking branch). 使用 `git pull`会直接拉取对应的远程分支合并到本地, 使用 `git push` 会自动推送到对应的远程分支.
+	+ clone 的时候就会自动创建一个 master 的跟踪分支, 跟踪 origin/master 分支
 
+```sh
+$ git checkout --track origin/some_branck_to_be_tracked
+# 或者
+$ git checkout -b sf origin/some_branck_to_be_tracked
+```
 
++ 分支的衍合(rebase)
+	+ 与 merge 对应的另一种合并分支的方法
+	+ rebase 将分支`A`中提交的改变,在分支	`B`中重放一遍.也就是将分支`A`的`变化补丁`在`B`中重新打一遍,然后产生一个新的提交, `A`再指向这个新的提交
+	+ rebase 的原理是: 回到`A`和`B`的最近公共祖先, 找到要进行 rebase 的分支(假设为`A`) 的后续历次提交记录, 产生一系列补丁, 然后在`base`分支(一般是master, 这里假设为`B`)的最后一个提交对象上逐个`应用`这些补丁, 然后每一个补丁对应生成一个新的提交对象, 这些对象是`B`的直接下游, 然后`A`再指向新生成的最后的对象. 然后就可以用`Fast Forward`合并A和B了.
+	+ 好处: 可以得到一个在远程分支上干净应用的补丁. 然后项目的维护这就可以根据这个补丁进行快速合并. 从而把解决分支冲突的责任转移给开发者.
+	+ 稍微复杂的应用: rebase 可以放到其他分支进行, 不一定是根据分化之前的分支.
+	+ `danger`: 一旦分支中的提交对象发布到公共仓库，就千万不要对该分支进行衍合操作
+	
+```sh
+# 切换到 A 上准备打补丁
+$ git checkout A 
+# 然后打补丁, 并且基于 B 生成补丁(新的 commit 对象), 它不会改变 B
+$ git rebase B 
 
+# 稍复杂的应用
+#    master分支出 server 分支, 然后 server 分支处 client 分支
+#    接着master,server和client都各种前进, 现在要跳过 server 直接把 client rebase 到 master
+#    --onto 指定 base 分支
+$ git rebase --onto master server client
 
+# 具体语法: 取出特性分支, 在主分支上重演
+$ git rebase [主分支] [特性分支]
+```
 
 
 #### 参考资料
-> [Pro Git（中文版）](http://git.oschina.net/progit/index.html)
+> [Pro Git（中文版）前3个章节](http://git.oschina.net/progit/index.html)
 
 
 
