@@ -15,8 +15,23 @@ hadoop的mapreduce流程
 	+ partition
 		+ 分割map每个节点的结果, 按照key分别映射给不同的reduce, 可以理解为归类, 默认使用hash, 可以自定义.
 		+ 默认:  reducer = (key.hashCode() & Integer.MAX_VALUE) % numReduceTasks
+		+ 这样可以将相同的key交给同一个reducer处理
 	+ shuffle
-		+ 将map阶段的输出copy到reduce节点本地
+		+ map端的shuffle
+			+ spill溢写
+				+ 每个map处理后的结果写入内存缓存区
+				+ 对每一条kv进行分区
+				+ 将相同分区的数据进行分区内排序
+				+ 当内存缓存区写满后写入到磁盘
+			+ merge合并: 将spill生成的小文件进行合并, 并排序
+			+ 结束该map任务, 通知AM过来取数据
+		+ reduce端的shuffle
+			+ reduce启动多个线程, 通过网络到每台机器上拉取属于自己的数据
+			+ merge合并: 
+				+ 将每个map task中属于自己分区的数据进行合并
+				+ 分区内排序
+				+ 分组: 对相同key的value进行合并
+				
 
 ### 详细流程
 ![mapreduce-process](resources/mapreduce-process.png)
