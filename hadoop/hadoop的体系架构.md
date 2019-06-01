@@ -38,14 +38,14 @@ hadoop的体系架构
 + 架构
 ![yarn_architecture](resources/yarn_architecture.gif)
 	+ RM 和 NM 组成数据计算框架
-		+ RM: 为系统中的应用(一个job或jobs的DAG)分配资源
+		+ RM: 为系统中的应用(一个job或jobs的DAG)分配资源, 全局的资源管理和任务调度
 			+ Scheduler: 根据它的知道的容量, 队列等限制将资源分配给运行中的不同的应用程序, 不负责跟踪和监控应用状态, 应用失败或硬件故障时不保证重启任务, 基于应用的资源需求而不是基于容器的整合资源执行调度功能. 通过插件可以按队列, 应用等资源拆分集群(?).
 			+ AsM(ApplicationsMaster): 接收提交的作业. 协商应用指定的AM运行需要的容器, 提供重启该容器的服务.  然后AM从Scheduler申请容器资源, 并跟踪和监控申请到的容器的状态.
-		+ NM: 每台机器上的框架代理, 职责是: 管理容器, 监控资源(CPU, 内存, 磁盘, 网络)使用情况, 然后报告给RM的Scheduler
-	+ AM(应用级)
+		+ NM: 单个节点的资源管理和任务监控, 职责是: 管理容器, 监控资源(CPU, 内存, 磁盘, 网络)使用情况, 然后报告给RM的Scheduler
+	+ AM(应用级): 单个应用的资源管理和监控
 		+ 向RM申请资源, RM告诉AM哪些容器可以用, AM还需要找NM分配具体的容器.
 		+  AM与NM交互来执行和监控具体的task(map/task).
-	+ Container: 
+	+ Container:  资源申请的单位和任务运行的容器
 		+ YARN框架的计算单元, 执行具体的task的基本单位, 一个节点运行多个Container, 一个Container不会跨节点.
 	
 + 是一个通用的资源管理模块, 为各类应用程序提供资源管理和调度监控, 不仅限于MapReduce一种框架, 也可以服务于其他框架, 如: Tez, Spark, Storm等.
@@ -55,6 +55,8 @@ hadoop的体系架构
  + AM创建应用程序, 申请资源并监控整个运行过程: 4-7
  
 
+### Hadoop V1 和 V2对比
+![hadoopv1vsv2](resources/hadoopv1vsv2.jpg)
 
 	
 
