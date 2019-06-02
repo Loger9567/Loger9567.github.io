@@ -31,6 +31,11 @@ hadoop的mapreduce流程
 				+ 将每个map task中属于自己分区的数据进行合并
 				+ 分区内排序
 				+ 分组: 对相同key的value进行合并
+		+ 优化
+			+ combiner: 符合结合律 A+(B+C) == (A+B)+C
+			+ compress: 减少磁盘IO和网络IO
+				+ hadoop checknative: 可以检查压缩
+				+ 替换lib/native可以修改本地压缩库, 常见压缩方式: snappy, lzo, lz4
 				
 
 ### 详细流程
@@ -39,6 +44,15 @@ hadoop的mapreduce流程
 ### 多节点下的流程
 ![mapreduce-process-cluster](resources/mapreduce-process-cluster.png)
 
++ 通过InputFormat决定读取的数据的类型, 然后拆分成InputSplit, 每个InputSplit对应一个Map处理, InputFormat决定读取数据的格式, 可以是文件或数据库
++ InputSplit: 代表一个逻辑分片, 没有真正存储数据, 只提供一个如何将数据分片的方法, Split里面有Location信息, 利于数据局部化
++ RecordReader: 将InputSplit拆分为一个个kv对给Map处理
++ 大量小文件如何处理
+	+ CombineFileInputFormat 可以将若干个Split打包成一个, 避免过多的Map任务
++ 如何计算split
+	+ 通常一个split就是一个block
+	+ 可通过 mapred.min.split.size, mapred.max.split.size, block.size来控制拆分大小
+	+ 如果mapred.min.split.size大于block size, 则会将一个block拆分为多个split, 增加了Map任务数
 
 
 
