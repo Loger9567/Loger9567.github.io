@@ -420,6 +420,68 @@ GET /lib3/user/_search/
     }
   }
 }
+# 使用match可以分词查询, 可以对比用terms(会报错), 或者term查出是空的
+GET /lib3/user/_search
+{
+  "query": {
+    "match": {
+      "name": "zhaoliu zhaoming"
+    }
+  }
+}
+# 可以使用multi_match指定多个字段
+GET /lib3/user/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "bei jing",
+      "fields": ["name", "address"]
+    }
+  }
+}
+
+# match_phrase 短语匹配, 相当于term不分词
+GET /lib3/user/_search
+{
+  "query": {
+    "match_phrase": {
+      "name": "zhaoliu zhaoming"
+    }
+  }
+}
+# 用_source指明返回字段, 里面也可以使用通配符
+GET /lib3/user/_search
+{
+  "_source": "age", 
+  "query": {
+    "match": {
+      "name": "zhaoliu zhaoming"
+    }
+  }
+}
+GET /lib3/user/_search
+{
+  "_source": ["age", "name"],
+  "query": {
+    "match": {
+      "name": "zhaoliu zhaoming"
+    }
+  }
+}
+
+GET /lib3/user/_search
+{
+  "_source": {
+    "includes": ["name", "age"]  
+    , "excludes": "address"
+  },
+  "query": {
+    "match": {
+      "name": "zhaoliu zhaoming"
+    }
+  }
+}
+
 ```
 
 
