@@ -324,7 +324,103 @@ PUT /lib/user/1?version=2&version_type=external
 }
 ```
 
+#### query 查询
+```
+# 首先建立索引
+PUT /lib3
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "user": {
+      "properties": {
+        "name": {
+          "type": "text"
+        },
+        "address": {
+          "type": "text"
+        },
+        "age": {
+          "type": "integer"
+        },
+        "interests": {
+          "type": "text"
+        },
+        "birthday": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}
 
+#准备数据
+PUT /lib3/user/1
+{
+  "name": "zhaoliu",
+  "address": "hei long jiang sheng tie ling shi",
+  "age": 50,
+  "birthday": "1970-12-12",
+  "interests": "xi huan hejiu, duanlian, lvyou"
+}
+PUT /lib3/user/2
+{
+  "name": "zhaoming",
+  "address": "bei jing hai dian qu qing he zhen",
+  "age": 20,
+  "birthday": "1998-10-12",
+  "interests": "xi huan hejiu, duanlian, changge"
+}
+PUT /lib3/user/3
+{
+  "name": "lisi",
+  "address": "ei jing hai dian qu qing he zhen",
+  "age": 23,
+  "birthday": "1995-09-12",
+  "interests": "xi huan hejiu, duanlian, lvyou"
+}
+PUT /lib3/user/4
+{
+  "name": "wangwu",
+  "address": "bei jing hai dian qu qing he zhen",
+  "age": 26,
+  "birthday": "1991-08-12",
+  "interests": "xi huan hejiu, tingyingyue, lvyou"
+}
+PUT /lib3/user/5
+{
+  "name": "zhangsan",
+  "address": "bei jing chao yang qu",
+  "age": 29,
+  "birthday": "1980-09-12",
+  "interests": "xi huan hejiu, changge, tiaowu"
+}
+
+# 按名字查
+GET /lib3/user/_search?q=name:lisi
+# 按兴趣查, 并按年龄降序排序
+GET /lib3/user/_search?q=interests:changge&sort=age:desc
+# term查询和terms查询, 根据倒排索引查, 不会分词, 适合查 keyword, numeric, data类型的
+GET /lib3/user/_search/ 
+{
+  "query":{
+    "term": {
+      "interests": "changge"
+    }
+  }
+}
+# terms指定多个关键词
+GET /lib3/user/_search/ 
+{
+  "query":{
+    "terms": {
+      "interests": ["changge", "hejiu"]
+    }
+  }
+}
+```
 
 
 ### 参考
