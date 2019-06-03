@@ -124,6 +124,206 @@ GET /_search
 }
 ```
 
+#### 增删查改
++ 新增索引: 
+
+```shell
+PUT /lib/
+{
+  "settings": {
+    "index":{
+      "number_of_shards": 3,
+      "number_of_replicas": 0
+    }
+  }
+}
+PUT lib2  # 新建索引lib2
+GET/lib/_settings  # 查看配置
+GET _all/settings  #查看所有
+```
+
++ 新增文档
+
+```shell
+# 指定ID
+PUT /lib/user/1
+{
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "age": 36,
+  "about": "I like ...",
+  "intrests": ["music"]
+}
+# 使用ES默认ID
+POST /lib/user
+{
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "age": 36,
+  "about": "I like ...",
+  "intrests": ["music"]
+}
+GET /lib/user/1  #查询文档
+GET /lib/user/1?_source=age,about  #查看指定字段
+```
++ 更新文档
+
+```shell
+# 用一个新文档替换用PUT, _version会自增
+PUT /lib/user/1
+{
+  "first_name": "Jane",
+  "last_name": "Smith",
+  "age": 30,
+  "about": "I like ...",
+  "intrests": ["music"]
+}
+
+# 直接更新指定字段, 如果字段与原来不同, 则_version会自增
+POST /lib/user/1/_update
+{
+  "doc": {
+    "age": 30
+  }
+}
+```
+
++ 删除文档 `DELETE /lib/user/1` , `DELETE lib`
+
+#### 批量获取文档 Multi Get API
+```
+# 获取所有字段
+GET /_mget
+{
+  "docs": [
+    {
+      "_index": "lib",
+      "_type": "user",
+      "_id": 1
+    },
+    {
+      "_index": "lib",
+      "_type": "user",
+      "_id": 2
+    },
+    {
+      "_index": "lib",
+      "_type": "user",
+      "_id": 3
+    }
+  ]
+}
+
+# 获取指定字段
+GET /_mget
+{
+  "docs": [
+    {
+      "_index": "lib",
+      "_type": "user",
+      "_id": 1,
+      "_source": "intrests"
+    },{
+      "_index": "lib",
+      "_type": "user",
+      "_id": 1,
+      "_source": ["age", "about"]
+    }
+  ]
+}
+
+# 获取相同索引下相同类型的文档
+GET /lib/user/_mget
+{
+  "docs": [
+    {
+      "_id": 1
+    },
+    {
+      "_id": 2
+    }
+  ]
+}
+# 或者
+GET /lib/user/_mget
+{
+  "ids": [1,2]
+}
+GET /lib/user/_mget
+{
+  "ids": ["1","2"]
+}
+```
+
+#### 批量操作 bulk
++ bulk的格式
+
+```
+{action: {metadata}}\n
+{requestbody}\n
+# action : 行为
+#	create: 文档不存在时创建
+#	update: 更新文档
+#	index: 创建新文档或替换已有文档
+#	delete: 删除一个文档
+#	metadata: _index, _type, _id
+#	create和index区别: 如果数据存在, create会失败, index会更新
+# demo: {"delete" : {"_index": "lib", "_type":"user", "_id":1}}
+
+# 批量添加
+POST /lib2/books/_bulk
+{"index":{"_id": 1}}
+{"title":"java","price":55}
+{"index":{"_id": 2}}
+{"title":"HTML5","price":56}
+{"index":{"_id": 3}}
+{"title":"python","price":57}
+{"index":{"_id": 4}}
+{"title":"php","price":58}
+
+# 批量混合操作, 最后一步的更新会报错
+POST /lib2/books/_bulk
+{"delete":{"_index":"lib2", "_type": "books", "_id":4}}
+{"create":{"_index":"tt", "_type": "ttt", "_id":100}}
+{"name":"lynn"}
+{"index":{"_index":"tt", "_type": "ttt"}}
+{"name": "zhangsan"}
+{"update":{"_index":"lib2", "_type": "books", "_id":4}}
+{"doc":{"price":54}}
+
+```
+
+#### 版本控制
+```
+# 默认使用内部版本, 乐观锁控制并发, 修改值后, 如果值与原来不同, _version自增1
+PUT /lib/user/1
+{
+  "first_name": "AA",
+  "last_name": "BB",
+  "age": 30,
+  "about": "I like ...",
+  "intrests": ["code"]
+}
+# 指定当前版本号, 当version参数与_version值相等才会更新, 然后_version自增, 否则报错
+PUT /lib/user/1?version=1
+{
+  "first_name": "AA",
+  "last_name": "BB",
+  "age": 30,
+  "about": "I like ...",
+  "intrests": ["code"]
+}
+# 使用外部版本, version必须大于_version才会更新, _version更新为 version, 否则报错
+PUT /lib/user/1?version=2&version_type=external
+{
+  "first_name": "AA",
+  "last_name": "BB",
+  "age": 30,
+  "about": "I like ...",
+  "intrests": ["code"]
+}
+```
+
 
 
 
